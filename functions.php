@@ -213,6 +213,8 @@ function type_scripts()
 	}
 
 	wp_enqueue_script('type-script', get_template_directory_uri() . '/js/main.js', array('jquery'), '20171003', true);
+	wp_deregister_script('jquery');
+	wp_enqueue_script('jquery', 'https://code.jquery.com/jquery-3.5.1.slim.min.js', array(), null, true);
 }
 add_action('wp_enqueue_scripts', 'type_scripts');
 
@@ -659,6 +661,33 @@ function type_credits()
 	echo esc_html($website_credits);
 }
 
+/**
+ * Remove dashicons CSS from the page, only load if user is logged in
+ */
+function dashicons_admin_only()
+{
+	if (!is_user_logged_in()) {
+		global $wp_styles;
+		wp_dequeue_style('dashicons');
+		wp_dequeue_style('wp-block-library');
+		// wp_deregister_style('dashicons') causes internal PHP errors in WordPress !
+		$wp_styles->registered['dashicons']->src = '';
+	}
+}
+
+add_action('wp_print_styles', 'dashicons_admin_only');
+
+function sb_conditionally_load_assets()
+{
+	if (is_front_page()) {
+		wp_dequeue_style('wppr-default-stylesheet');
+		wp_dequeue_style('wppr-percentage-circle');
+		wp_dequeue_style('wppr-common');
+		wp_dequeue_style('type-social-icons');
+	}
+}
+
+add_action('wp_enqueue_scripts', 'sb_conditionally_load_assets');
 
 /**
  * Add Upsell "pro" link to the customizer
