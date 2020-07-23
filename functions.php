@@ -214,7 +214,7 @@ function type_scripts()
 
 	wp_enqueue_script('type-script', get_template_directory_uri() . '/js/main.js', array('jquery'), '20171003', true);
 	wp_deregister_script('jquery');
-	wp_enqueue_script('jquery', 'https://code.jquery.com/jquery-3.5.1.slim.min.js', array(), null, true);
+	wp_enqueue_script('jquery', 'https://code.jquery.com/jquery-3.5.1.slim.min.js#asyncload', array(), null, true);
 }
 add_action('wp_enqueue_scripts', 'type_scripts');
 
@@ -682,8 +682,8 @@ function sb_conditionally_load_assets()
 	if (is_front_page()) {
 		wp_dequeue_style('wppr-default-stylesheet');
 		wp_dequeue_style('wppr-percentage-circle');
+		wp_dequeue_style('wppr-lightbox');
 		wp_dequeue_style('wppr-common');
-		wp_dequeue_style('type-social-icons');
 	}
 }
 
@@ -732,3 +732,14 @@ function allchinareviews_social_sharing_buttons($content)
 	}
 };
 add_filter('the_content', 'allchinareviews_social_sharing_buttons');
+
+// Enqueue scripts
+function ikreativ_theme_scripts()
+{
+	// wp_enqueue_script() syntax, $handle, $src, $deps, $version, $in_footer(boolean)
+	wp_enqueue_script('plugins', get_template_directory_uri() . '/assets/js/plugins.min.js#asyncload', 'jquery', '', true);
+	wp_enqueue_script('application', get_template_directory_uri() . '/assets/js/application.min.js#asyncload', 'jquery', '', true);
+}
+add_action('wp_enqueue_scripts', 'ikreativ_theme_scripts');
+
+add_filter('wpseo_canonical', '__return_false');
